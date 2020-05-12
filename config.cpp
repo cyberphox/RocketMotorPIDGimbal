@@ -1,5 +1,6 @@
 #include "config.h"
 ConfigStruct config;
+const int pinSpeaker = PA0;
 //================================================================
 // read and write in the microcontroler eeprom
 //================================================================
@@ -27,6 +28,7 @@ void defaultConfig()
   config.unit=0;
   config.endRecordAltitude=3;
   config.beepingFrequency=440;
+  config.liftOffDetect=0;
    
   config.cksum=CheckSumConf(config);
   //config.cksum=0xBA; 
@@ -139,7 +141,10 @@ bool  writeAltiConfig( char *p ) {
       break; 
     case 22:  
       config.beepingFrequency=atoi(str);
-      break;    
+      break;  
+    case 23:
+      config.liftOffDetect=atoi(str);  
+      break;
     }
     i++;
 
@@ -162,4 +167,34 @@ void writeConfigStruc()
     for( i=0; i<sizeof(config); i++ ) {
       EEPROM.write(CONFIG_START+i, *((char*)&config + i));
     }
+}
+void longBeep()
+{
+  //if (NoBeep == false)
+  //{
+    tone(pinSpeaker, 440, 1000);
+    delay(1500);
+    noTone(pinSpeaker);
+  //}
+}
+void shortBeep()
+{
+ // if (NoBeep == false)
+  //{
+    tone(pinSpeaker, 440, 25);
+    delay(300);
+    noTone(pinSpeaker);
+  //}
+}
+void beepAltiVersion (int majorNbr, int minorNbr)
+{
+  int i;
+  for (i = 0; i < majorNbr; i++)
+  {
+    longBeep();
+  }
+  for (i = 0; i < minorNbr; i++)
+  {
+    shortBeep();
+  }
 }

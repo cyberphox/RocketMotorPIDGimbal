@@ -4,8 +4,19 @@
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 0
 #define CONFIG_START 32
+extern const int pinSpeaker;
+#define BAT_MIN_VOLTAGE 7.0
+//Voltage divider
+#define R1 4.7
+#define R2 10
 
+#define VOLT_DIVIDER 10*(R1/(R1+R2))
 #include "Arduino.h"
+
+// If you want to have additionnal debugging uncomment it
+//#define SERIAL_DEBUG
+#undef SERIAL_DEBUG
+
 //used for writing in the microcontroler internal eeprom
 #include <EEPROM.h>
 
@@ -32,7 +43,8 @@ struct ConfigStruct {
   int unit;
   int endRecordAltitude;
   int beepingFrequency;
-  int cksum;  
+  int liftOffDetect;
+  int cksum;
 };
 extern ConfigStruct config;
 extern void defaultConfig();
@@ -40,4 +52,9 @@ extern boolean readAltiConfig();
 extern void writeConfigStruc();
 extern unsigned int CheckSumConf( ConfigStruct );
 extern bool writeAltiConfig( char *p );
+
+extern void longBeep();
+extern void shortBeep();
+extern void beepAltiVersion (int majorNbr, int minorNbr);
+
 #endif
